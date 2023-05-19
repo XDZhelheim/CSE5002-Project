@@ -14,9 +14,9 @@ def asym_adj(adj):
     return d_mat.dot(adj).astype(np.float32).todense()
 
 
-class GCN(nn.Module):
+class DF_GCN(nn.Module):
     def __init__(self, dim_in, dim_out, cheb_k):
-        super(GCN, self).__init__()
+        super(DF_GCN, self).__init__()
         self.cheb_k = cheb_k
         self.dim_in = dim_in
         self.W = nn.Parameter(torch.empty(cheb_k * dim_in, dim_out), requires_grad=True)
@@ -37,6 +37,22 @@ class GCN(nn.Module):
         support_cat = torch.cat(support_list, dim=-1)  # [N, k * C]
         output = torch.matmul(support_cat, self.W) + self.b  # [N, H_out]
         return output
+
+
+class GCN(nn.Module):
+    def __init__(self, dim_in, dim_out):
+        super().__init__()
+        self.W = nn.Parameter(torch.empty(dim_in, dim_out))
+        self.b = nn.Parameter(torch.empty(dim_out))
+        nn.init.xavier_normal_(self.W)
+        nn.init.constant_(self.b, val=0)
+
+    def forward(self, x, adj):
+        xw = torch.mm(x, self.W)
+        axw = torch.mm(adj, xw)
+        axw += self.b
+
+        return axw
 
 
 class GCN_CLF(nn.Module):
@@ -63,6 +79,8 @@ class GCN_CLF(nn.Module):
         self.num_layers = num_layers
 
         adj = np.load(adj_path)["data"]
+        self.adj = torch.FloatTensor(adj).to(device)
+        
         adj = [asym_adj(adj), asym_adj(np.transpose(adj))]
         self.P = self.compute_cheby_poly(adj).to(device)
         k = self.P.shape[0]
@@ -74,7 +92,8 @@ class GCN_CLF(nn.Module):
 
         self.input_proj = nn.Linear(input_dim, hidden_dim)
         self.gcn_list = nn.ModuleList(
-            GCN(dim_in=hidden_dim, dim_out=hidden_dim, cheb_k=k)
+            DF_GCN(dim_in=hidden_dim, dim_out=hidden_dim, cheb_k=k)
+            # GCN(dim_in=hidden_dim, dim_out=hidden_dim)
             for _ in range(num_layers)
         )
         self.output_proj = nn.Sequential(

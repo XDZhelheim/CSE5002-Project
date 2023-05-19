@@ -1,9 +1,9 @@
-  lr: 0.001
+  lr: 0.01
   weight_decay: 0
-  milestones: [50]
+  milestones: []
   clip_grad: 0
-  max_epochs: 200
-  early_stop: 20
+  max_epochs: 1000
+  early_stop: 9999
 
   pass_device: True
 
@@ -13,6 +13,6 @@
     input_dim: 6
     output_dim: 11
     hidden_dim: 32
-    node_embedding_dim: 0
-    cheb_k: 3
-    num_layers: 3
+    node_embedding_dim: 16
+    cheb_k: 1
+    num_layers: 1

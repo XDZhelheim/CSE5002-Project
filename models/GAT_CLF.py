@@ -109,15 +109,14 @@ class SelfAttentionLayer(nn.Module):
         return out
 
 
-class GridGAT(nn.Module):
+class GAT_CLF(nn.Module):
     def __init__(
         self,
-        num_grids_height=20,
-        num_grids_width=20,
-        input_dim=3,
-        output_dim=1,
+        num_nodes=5298,
+        input_dim=6,
+        output_dim=11,
         input_embedding_dim=32,
-        grid_embedding_dim=32,
+        node_embedding_dim=32,
         feed_forward_dim=256,
         num_heads=4,
         num_layers=3,
@@ -125,21 +124,18 @@ class GridGAT(nn.Module):
     ):
         super().__init__()
 
-        self.num_grids_height = num_grids_height
-        self.num_grids_width = num_grids_width
+        self.num_nodes = num_nodes
         self.input_dim = input_dim
         self.output_dim = output_dim
-        self.grid_embedding_dim = grid_embedding_dim
-        self.model_dim = input_embedding_dim + grid_embedding_dim
+        self.node_embedding_dim = node_embedding_dim
+        self.model_dim = input_embedding_dim + node_embedding_dim
         self.feed_forward_dim = feed_forward_dim
         self.num_heads = num_heads
         self.num_layers = num_layers
 
-        if grid_embedding_dim > 0:
-            self.grid_embedding = nn.init.xavier_normal(
-                nn.Parameter(
-                    torch.empty(num_grids_height * num_grids_height, grid_embedding_dim)
-                )
+        if node_embedding_dim > 0:
+            self.node_embedding = nn.init.xavier_normal_(
+                nn.Parameter(torch.empty(num_nodes, node_embedding_dim))
             )
 
         self.input_proj = nn.Linear(input_dim, input_embedding_dim)
@@ -156,28 +152,21 @@ class GridGAT(nn.Module):
         )
 
     def forward(self, x):
-        # x: (batch_size, num_grids_height, num_grids_width, 2)
-        batch_size = x.shape[0]
-        x = x.view(
-            batch_size, self.num_grids_height * self.num_grids_width, self.input_dim
-        )
+        # x: (N, C)
 
-        x = self.input_proj(x)  # (B, H*W, input_embedding_dim)
-        if self.grid_embedding_dim > 0:
-            grid_emb = self.grid_embedding.expand(batch_size, *self.grid_embedding.shape)
-            x = torch.concat([x, grid_emb], dim=-1)  # (B, H*W, model_dim)
+        x = self.input_proj(x)  # (N, input_embedding_dim)
+        if self.node_embedding_dim > 0:
+            x = torch.concat([x, self.node_embedding], dim=-1)  # (B, H*W, model_dim)
 
         for gat in self.gat_list:
-            x = gat(x)  # (B, H*W, model_dim)
-        out = self.output_proj(x)  # (B, H*W, output_dim)
+            x = gat(x)  # (N, model_dim)
+        out = self.output_proj(x)  # (N, output_dim)
 
-        out = out.view(
-            batch_size, self.num_grids_height, self.num_grids_width, self.output_dim
-        )
+        out = torch.softmax(out, dim=-1)
 
         return out
 
 
 if __name__ == "__main__":
-    model = GridGAT(num_layers=3)
-    summary(model, [64, 20, 20, 3], device="cpu")
+    model = GAT_CLF(num_layers=3)
+    summary(model, [5298, 6], device="cpu")

@@ -19,78 +19,47 @@ from lib.utils import (
     CustomJSONEncoder,
 )
 from lib.metrics import accuracy
-from lib.data_prepare import get_dataloaders_from_tvt
+from lib.data_prepare import get_tensors
 from models import model_select
 
 
 @torch.no_grad()
-def eval_model(model, valset_loader, criterion):
+def eval_model(model, x, y, val_indices):
     model.eval()
-    batch_loss_list = []
-    batch_acc_list = []
-    for x_batch, y_batch in valset_loader:
-        x_batch = x_batch.to(DEVICE)
-        y_batch = y_batch.to(DEVICE)
 
-        out_batch = model.forward(x_batch)
-        loss = criterion.forward(out_batch, y_batch)
-        batch_loss_list.append(loss.item())
+    out = model.forward(x)
 
-        acc = accuracy(out_batch, y_batch)
-        batch_acc_list.append(acc)
+    acc = accuracy(out[val_indices], y[val_indices])
 
-    return np.mean(batch_loss_list), np.mean(batch_acc_list)
+    return acc
 
 
 @torch.no_grad()
-def predict(model, loader):
+def predict(model, x):
     model.eval()
-    y = []
-    out = []
 
-    for x_batch, y_batch in loader:
-        x_batch = x_batch.to(DEVICE)
-        y_batch = y_batch.to(DEVICE)
-
-        out_batch = model(x_batch)
-
-        out_batch = out_batch.cpu()
-        y_batch = y_batch.cpu()
-        out.append(out_batch)
-        y.append(y_batch)
-
-    out = torch.vstack(out).squeeze()
-    y = torch.vstack(y).squeeze()
-
-    return y, out
+    out = model(x).cpu()
+    return out
 
 
 def train_one_epoch(
-    model, trainset_loader, optimizer, scheduler, criterion, clip_grad, log=None
+    model, x, y, train_indices, optimizer, scheduler, criterion, clip_grad, log=None
 ):
     model.train()
-    batch_loss_list = []
-    batch_acc_list = []
-    for x_batch, y_batch in trainset_loader:
-        x_batch = x_batch.to(DEVICE)
-        y_batch = y_batch.to(DEVICE)
 
-        out_batch = model(x_batch)
+    out = model(x)
 
-        loss = criterion(out_batch, y_batch)
-        batch_loss_list.append(loss.item())
+    loss = criterion(out[train_indices], y[train_indices])
+    epoch_loss = loss.item()
 
-        acc = accuracy(out_batch, y_batch)
-        batch_acc_list.append(acc)
+    epoch_acc = accuracy(out[train_indices], y[train_indices])
 
-        optimizer.zero_grad()
-        loss.backward()
-        if clip_grad:
-            torch.nn.utils.clip_grad_norm_(model.parameters(), clip_grad)
-        optimizer.step()
+    optimizer.zero_grad()
+    loss.backward()
+    if clip_grad:
+        torch.nn.utils.clip_grad_norm_(model.parameters(), clip_grad)
+    optimizer.step()
 
-    epoch_loss = np.mean(batch_loss_list)
-    epoch_acc = np.mean(batch_acc_list)
     scheduler.step()
 
     return epoch_loss, epoch_acc
@@ -98,8 +67,10 @@ def train_one_epoch(
 
 def train(
     model,
-    trainset_loader,
-    valset_loader,
+    x,
+    y,
+    train_indices,
+    val_indices,
     optimizer,
     scheduler,
     criterion,
@@ -117,22 +88,28 @@ def train(
     model = model.to(DEVICE)
 
     wait = 0
-    min_val_loss = np.inf
+    max_val_acc = -np.inf
 
     train_loss_list = []
     train_acc_list = []
-    val_loss_list = []
     val_acc_list = []
 
     for epoch in range(max_epochs):
         train_loss, train_acc = train_one_epoch(
-            model, trainset_loader, optimizer, scheduler, criterion, clip_grad, log=log
+            model,
+            x,
+            y,
+            train_indices,
+            optimizer,
+            scheduler,
+            criterion,
+            clip_grad,
+            log=log,
         )
         train_loss_list.append(train_loss)
         train_acc_list.append(train_acc)
 
-        val_loss, val_acc = eval_model(model, valset_loader, criterion)
-        val_loss_list.append(val_loss)
+        val_acc = eval_model(model, x, y, val_indices)
         val_acc_list.append(val_acc)
 
         if (epoch + 1) % verbose == 0:
@@ -142,14 +119,13 @@ def train(
                 epoch + 1,
                 "\tTrain Loss = %.5f" % train_loss,
                 "Train acc = %.5f " % train_acc,
-                "Val Loss = %.5f" % val_loss,
                 "Val acc = %.5f " % val_acc,
                 log=log,
             )
 
-        if val_loss < min_val_loss:
+        if val_acc > max_val_acc:
             wait = 0
-            min_val_loss = val_loss
+            max_val_acc = val_acc
             best_epoch = epoch
             best_state_dict = model.state_dict()
         else:
@@ -163,13 +139,11 @@ def train(
     out_str += f"Best at epoch {best_epoch+1}:\n"
     out_str += "Train Loss = %.5f\n" % train_loss_list[best_epoch]
     out_str += "Train acc = %.5f " % train_acc_list[best_epoch]
-    out_str += "Val Loss = %.5f\n" % val_loss_list[best_epoch]
     out_str += "Val acc = %.5f " % val_acc_list[best_epoch]
     print_log(out_str, log=log)
 
     if plot:
         plt.plot(range(0, epoch + 1), train_loss_list, "-", label="Train Loss")
-        plt.plot(range(0, epoch + 1), val_loss_list, "-", label="Val Loss")
         plt.title("Epoch-Loss")
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
@@ -190,18 +164,18 @@ def train(
 
 
 @torch.no_grad()
-def test_model(model, testset_loader, log=None):
+def test_model(model, x, y, test_indices, log=None):
     model.eval()
     print_log("--------- Test ---------", log=log)
 
     start = time.time()
-    y_true, y_pred = predict(model, testset_loader)
+    y_pred = predict(model, x)
     end = time.time()
 
-    test_acc = accuracy(y_pred, y_true)
-    out_str = "Test acc = %.5f " % test_acc
+    test_acc = accuracy(y_pred[test_indices], y[test_indices])
+    out_str = "Test acc = %.5f" % test_acc
 
-    print_log(out_str, log=log, end="")
+    print_log(out_str, log=log)
     print_log("Inference time: %.2f s" % (end - start), log=log)
 
 
@@ -223,19 +197,12 @@ if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"] = f"{GPU_ID}"
     DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    # TODO dataset
-    n = args.n
-    p = args.p
-    dataset = f"n_{n}_p_{p}"
-    data_path = f"../data/{dataset}"
     model_name = args.model.upper()
-
     model_class = model_select(model_name)
     model_name = model_class.__name__
 
     with open(f"../configs/{model_name}.yaml", "r") as f:
         cfg = yaml.safe_load(f)
-    cfg = cfg[dataset]
 
     # -------------------------------- load model -------------------------------- #
 
@@ -252,24 +219,16 @@ if __name__ == "__main__":
     log_path = f"../logs/{model_name}"
     if not os.path.exists(log_path):
         os.makedirs(log_path)
-    log = os.path.join(log_path, f"{model_name}-{dataset}-{now}.log")
+    log = os.path.join(log_path, f"{model_name}-{now}.log")
     log = open(log, "a")
     log.seek(0)
     log.truncate()
 
     # ------------------------------- load dataset ------------------------------- #
 
-    print_log(dataset, log=log)
-    (
-        trainset_loader,
-        valset_loader,
-        testset_loader,
-    ) = get_dataloaders_from_tvt(
-        n,
-        p,
-        batch_size=cfg.get("batch_size", 32),
-        log=log,
-    )
+    x, y, train_indices, val_indices, test_indices = get_tensors(log=log)
+    x = x.to(DEVICE)
+    y = y.to(DEVICE)
     print_log(log=log)
 
     # --------------------------- set model saving path -------------------------- #
@@ -277,7 +236,7 @@ if __name__ == "__main__":
     save_path = f"../saved_models/{model_name}"
     if not os.path.exists(save_path):
         os.makedirs(save_path)
-    save = os.path.join(save_path, f"{model_name}-{dataset}-{now}.pt")
+    save = os.path.join(save_path, f"{model_name}-{now}.pt")
 
     # ---------------------- set loss, optimizer, scheduler ---------------------- #
 
@@ -306,12 +265,11 @@ if __name__ == "__main__":
         summary(
             model,
             [
-                cfg["batch_size"],
-                cfg["num_grids_width"],
-                cfg["num_grids_height"],
+                cfg["model_args"]["num_nodes"],
                 cfg["model_args"]["input_dim"],
             ],
             verbose=0,
+            device=DEVICE,
         ),
         log=log,
     )
@@ -324,8 +282,10 @@ if __name__ == "__main__":
 
     model = train(
         model,
-        trainset_loader,
-        valset_loader,
+        x,
+        y,
+        train_indices,
+        val_indices,
         optimizer,
         scheduler,
         criterion,
@@ -338,6 +298,6 @@ if __name__ == "__main__":
         save=save,
     )
 
-    test_model(model, testset_loader, log=log)
+    test_model(model, x, y, test_indices, log=log)
 
     log.close()

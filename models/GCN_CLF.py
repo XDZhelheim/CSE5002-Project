@@ -105,7 +105,7 @@ class GCN_CLF(nn.Module):
             x = gcn(x, supports)  # (N, hidden_dim)
         out = self.output_proj(x)  # (N, output_dim)
 
-        out = torch.softmax(out, dim=-1)
+        # out = torch.softmax(out, dim=-1)
 
         return out
 

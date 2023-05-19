@@ -63,7 +63,7 @@ def gen_labels(
 
     train_labels = labels[:train_num]
 
-    train_indices = np.argwhere(train_labels != -1)
+    train_indices = np.argwhere(train_labels != -1).squeeze()
     val_indices = np.arange(train_num, train_num + val_num)
     test_indices = np.arange(train_num + val_num, len(labels))
 

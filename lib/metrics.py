@@ -1,11 +1,15 @@
 import numpy as np
 import torch
 
+
 def onehot_decode(label):
     return torch.argmax(label, dim=1)
 
 
 def accuracy(predictions, targets):
+    predictions = predictions.cpu().detach()
+    targets = targets.cpu().detach()
+
     pred_decode = onehot_decode(predictions)
     true_decode = targets
 

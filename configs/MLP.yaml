@@ -7,6 +7,6 @@
 
   model_args:
     num_nodes: 5298
-    input_dim: 6
+    input_dim: 2666
     output_dim: 11
     hidden_dim: 32

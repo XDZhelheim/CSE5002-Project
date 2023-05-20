@@ -15,4 +15,4 @@
     hidden_dim: 32
     node_embedding_dim: 16
     cheb_k: 1
-    num_layers: 1
+    num_layers: 2

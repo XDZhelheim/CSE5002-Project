@@ -14,9 +14,26 @@ def asym_adj(adj):
     return d_mat.dot(adj).astype(np.float32).todense()
 
 
-class DF_GCN(nn.Module):
+def calculate_normalized_laplacian(adj):
+    """
+    # L = D^-1/2 (D-A) D^-1/2 = I - D^-1/2 A D^-1/2
+    # D = diag(A 1)
+    """
+    adj = sp.coo_matrix(adj)
+    d = np.array(adj.sum(1))
+    d_inv_sqrt = np.power(d, -0.5).flatten()
+    d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.0
+    d_mat_inv_sqrt = sp.diags(d_inv_sqrt)
+    normalized_laplacian = (
+        sp.eye(adj.shape[0])
+        - adj.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt).tocoo()
+    )
+    return normalized_laplacian.astype(np.float32).todense()
+
+
+class DFGCN(nn.Module):
     def __init__(self, dim_in, dim_out, cheb_k):
-        super(DF_GCN, self).__init__()
+        super(DFGCN, self).__init__()
         self.cheb_k = cheb_k
         self.dim_in = dim_in
         self.W = nn.Parameter(torch.empty(cheb_k * dim_in, dim_out), requires_grad=True)
@@ -48,14 +65,64 @@ class GCN(nn.Module):
         nn.init.constant_(self.b, val=0)
 
     def forward(self, x, adj):
-        xw = torch.mm(x, self.W)
-        axw = torch.mm(adj, xw)
-        axw += self.b
+        axw = adj @ x @ self.W + self.b
 
         return axw
 
 
-class GCN_CLF(nn.Module):
+class LapeGCN(nn.Module):
+    def __init__(
+        self,
+        device,
+        adj_path,
+        num_nodes=5298,
+        input_dim=6,
+        output_dim=11,
+        hidden_dim=32,
+        num_layers=3,
+    ):
+        super().__init__()
+
+        self.num_nodes = num_nodes
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        self.hidden_dim = hidden_dim
+        self.num_layers = num_layers
+
+        adj = np.load(adj_path)["data"]
+        adj = calculate_normalized_laplacian(adj)
+        self.adj = torch.FloatTensor(adj).to(device)
+
+        self.input_proj = nn.Linear(input_dim, hidden_dim)
+        self.gcn_list = nn.ModuleList(
+            GCN(dim_in=hidden_dim, dim_out=hidden_dim) for _ in range(num_layers)
+        )
+        self.output_proj = nn.Sequential(
+            nn.Linear(hidden_dim * num_layers, hidden_dim),
+            nn.ReLU(inplace=True),
+            nn.Linear(hidden_dim, output_dim),
+        )
+
+    def forward(self, x):
+        # x: (N, C)
+
+        skip_conn = []
+
+        x = self.input_proj(x)  # (N, hidden_dim)
+        for gcn in self.gcn_list:
+            residual = x
+            x = gcn(x, self.adj)  # (N, hidden_dim)
+            skip_conn.append(x)
+            x += residual
+
+        skip_conn = torch.concat(skip_conn, dim=-1)
+
+        out = self.output_proj(skip_conn)  # (N, output_dim)
+
+        return out
+
+
+class ADFGCN(nn.Module):
     def __init__(
         self,
         device,
@@ -79,8 +146,6 @@ class GCN_CLF(nn.Module):
         self.num_layers = num_layers
 
         adj = np.load(adj_path)["data"]
-        self.adj = torch.FloatTensor(adj).to(device)
-        
         adj = [asym_adj(adj), asym_adj(np.transpose(adj))]
         self.P = self.compute_cheby_poly(adj).to(device)
         k = self.P.shape[0]
@@ -92,14 +157,13 @@ class GCN_CLF(nn.Module):
 
         self.input_proj = nn.Linear(input_dim, hidden_dim)
         self.gcn_list = nn.ModuleList(
-            DF_GCN(dim_in=hidden_dim, dim_out=hidden_dim, cheb_k=k)
-            # GCN(dim_in=hidden_dim, dim_out=hidden_dim)
+            DFGCN(dim_in=hidden_dim, dim_out=hidden_dim, cheb_k=k)
             for _ in range(num_layers)
         )
         self.output_proj = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim // 2),
+            nn.Linear(hidden_dim * num_layers, hidden_dim),
             nn.ReLU(inplace=True),
-            nn.Linear(hidden_dim // 2, output_dim),
+            nn.Linear(hidden_dim, output_dim),
         )
 
     def forward(self, x):
@@ -119,10 +183,18 @@ class GCN_CLF(nn.Module):
 
         supports = torch.concat(supports, dim=0)
 
+        skip_conn = []
+
         x = self.input_proj(x)  # (N, hidden_dim)
         for gcn in self.gcn_list:
+            residual = x
             x = gcn(x, supports)  # (N, hidden_dim)
-        out = self.output_proj(x)  # (N, output_dim)
+            skip_conn.append(x)
+            x += residual
+
+        skip_conn = torch.concat(skip_conn, dim=-1)
+
+        out = self.output_proj(skip_conn)  # (N, output_dim)
 
         # out = torch.softmax(out, dim=-1)
 
@@ -140,7 +212,7 @@ class GCN_CLF(nn.Module):
 
 
 if __name__ == "__main__":
-    model = GCN_CLF(
+    model = ADFGCN(
         device=torch.device("cpu"),
         adj_path="../data/adj.npz",
         num_layers=3,

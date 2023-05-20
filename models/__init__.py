@@ -1,4 +1,4 @@
-from .GCN_CLF import GCN_CLF
+from .GCN_CLF import ADFGCN, LapeGCN
 from .GAT_CLF import GAT_CLF
 from .MLP import MLP
 
@@ -6,9 +6,11 @@ from .MLP import MLP
 def model_select(name):
     name = name.upper()
 
-    if name in ("GCN",):
-        return GCN_CLF
-    elif name in ("GAT",):
+    if name == "ADFGCN":
+        return ADFGCN
+    elif name in ("GCN", "LAPEGCN"):
+        return LapeGCN
+    elif name == "GAT":
         return GAT_CLF
     elif name == "MLP":
         return MLP

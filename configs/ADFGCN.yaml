@@ -1,7 +1,7 @@
   lr: 0.01
-  weight_decay: 0
+  weight_decay: 0.01
   milestones: [10]
-  clip_grad: 0
+  clip_grad: 5
   max_epochs: 1000
   early_stop: 30
 
@@ -16,3 +16,4 @@
     node_embedding_dim: 16
     cheb_k: 1
     num_layers: 2
+    dropout: 0

@@ -32,7 +32,7 @@ def calculate_normalized_laplacian(adj):
 
 
 class DFGCN(nn.Module):
-    def __init__(self, dim_in, dim_out, cheb_k):
+    def __init__(self, dim_in, dim_out, cheb_k, dropout=0.1):
         super(DFGCN, self).__init__()
         self.cheb_k = cheb_k
         self.dim_in = dim_in
@@ -40,6 +40,8 @@ class DFGCN(nn.Module):
         self.b = nn.Parameter(torch.empty(dim_out), requires_grad=True)
         nn.init.xavier_normal_(self.W)
         nn.init.constant_(self.b, val=0)
+
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x, G):
         """
@@ -50,9 +52,11 @@ class DFGCN(nn.Module):
         support_list = []
         for k in range(self.cheb_k):
             support = torch.matmul(G[k, :, :], x)  # [N, C] perform GCN
+            support = self.dropout(support)
             support_list.append(support)  # k * [N, C]
         support_cat = torch.cat(support_list, dim=-1)  # [N, k * C]
         output = torch.matmul(support_cat, self.W) + self.b  # [N, H_out]
+
         return output
 
 
@@ -134,6 +138,7 @@ class ADFGCN(nn.Module):
         node_embedding_dim=32,
         cheb_k=3,
         num_layers=3,
+        dropout=0.1,
     ):
         super().__init__()
 
@@ -157,12 +162,13 @@ class ADFGCN(nn.Module):
 
         self.input_proj = nn.Linear(input_dim, hidden_dim)
         self.gcn_list = nn.ModuleList(
-            DFGCN(dim_in=hidden_dim, dim_out=hidden_dim, cheb_k=k)
+            DFGCN(dim_in=hidden_dim, dim_out=hidden_dim, cheb_k=k, dropout=dropout)
             for _ in range(num_layers)
         )
         self.output_proj = nn.Sequential(
             nn.Linear(hidden_dim * num_layers, hidden_dim),
             nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
             nn.Linear(hidden_dim, output_dim),
         )
 

@@ -1,4 +1,4 @@
-from .GCN_CLF import ADFGCN, LapeGCN
+from .GCN import ADFGCN, LapeGCN
 from .GAT_CLF import GAT_CLF
 from .MLP import MLP
 

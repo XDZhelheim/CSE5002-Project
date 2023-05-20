@@ -1,16 +1,17 @@
-  lr: 0.01
-  weight_decay: 0
-  milestones: [10]
-  clip_grad: 0
-  max_epochs: 1000
-  early_stop: 30
+lr: 0.01
+weight_decay: 0.001
+milestones: [10]
+clip_grad: 5
+max_epochs: 1000
+early_stop: 50
 
-  pass_device: True
+pass_device: True
 
-  model_args:
-    num_nodes: 5298
-    adj_path: "../data/adj.npz"
-    input_dim: 2666
-    output_dim: 11
-    hidden_dim: 32
-    num_layers: 2
+model_args:
+  num_nodes: 5298
+  adj_path: "../data/adj.npz"
+  input_classes_list: [6, 3, 43, 44, 64, 2506]
+  embedding_dim: 8
+  output_dim: 11
+  hidden_dim: 32
+  num_layers: 2

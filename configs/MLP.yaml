@@ -1,12 +1,11 @@
-  lr: 0.001
-  weight_decay: 0
-  milestones: [100]
-  clip_grad: 0
-  max_epochs: 200
-  early_stop: 9999
+lr: 0.001
+weight_decay: 0
+milestones: [100]
+clip_grad: 0
+max_epochs: 1000
+early_stop: 50
 
-  model_args:
-    num_nodes: 5298
-    input_dim: 2666
-    output_dim: 11
-    hidden_dim: 32
+model_args:
+  input_dim: 2666
+  output_dim: 11
+  hidden_dim: 32

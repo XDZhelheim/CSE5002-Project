@@ -4,6 +4,9 @@ import scipy.sparse as sp
 import numpy as np
 from torchinfo import summary
 
+# ! deprecated
+# 这些模型的输入是 onehot 编码的
+
 
 def asym_adj(adj):
     adj = sp.coo_matrix(adj)
@@ -31,35 +34,6 @@ def calculate_normalized_laplacian(adj):
     return normalized_laplacian.astype(np.float32).todense()
 
 
-class DFGCN(nn.Module):
-    def __init__(self, dim_in, dim_out, cheb_k, dropout=0.1):
-        super(DFGCN, self).__init__()
-        self.cheb_k = cheb_k
-        self.dim_in = dim_in
-        self.W = nn.Parameter(torch.empty(cheb_k * dim_in, dim_out), requires_grad=True)
-        self.b = nn.Parameter(torch.empty(dim_out), requires_grad=True)
-        nn.init.xavier_normal_(self.W)
-        nn.init.constant_(self.b, val=0)
-
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, x, G):
-        """
-        :param x: graph feature/signal          -   [N, C]
-        :param G: support adj matrices          -   [K, N, N]
-        :return output: hidden representation   -   [N, H_out]
-        """
-        support_list = []
-        for k in range(self.cheb_k):
-            support = torch.matmul(G[k, :, :], x)  # [N, C] perform GCN
-            support = self.dropout(support)
-            support_list.append(support)  # k * [N, C]
-        support_cat = torch.cat(support_list, dim=-1)  # [N, k * C]
-        output = torch.matmul(support_cat, self.W) + self.b  # [N, H_out]
-
-        return output
-
-
 class GCN(nn.Module):
     def __init__(self, dim_in, dim_out):
         super().__init__()
@@ -74,13 +48,13 @@ class GCN(nn.Module):
         return axw
 
 
-class LapeGCN(nn.Module):
+class LapeGCN_onehot(nn.Module):
     def __init__(
         self,
         device,
         adj_path,
         num_nodes=5298,
-        input_dim=6,
+        input_dim=2666,
         output_dim=11,
         hidden_dim=32,
         num_layers=3,
@@ -126,18 +100,47 @@ class LapeGCN(nn.Module):
         return out
 
 
-class ADFGCN(nn.Module):
+class DFGCN(nn.Module):
+    def __init__(self, dim_in, dim_out, cheb_k, dropout=0.1):
+        super(DFGCN, self).__init__()
+        self.cheb_k = cheb_k
+        self.dim_in = dim_in
+        self.W = nn.Parameter(torch.empty(cheb_k * dim_in, dim_out), requires_grad=True)
+        self.b = nn.Parameter(torch.empty(dim_out), requires_grad=True)
+        nn.init.xavier_normal_(self.W)
+        nn.init.constant_(self.b, val=0)
+
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x, G):
+        """
+        :param x: graph feature/signal          -   [N, C]
+        :param G: support adj matrices          -   [K, N, N]
+        :return output: hidden representation   -   [N, H_out]
+        """
+        support_list = []
+        for k in range(self.cheb_k):
+            support = torch.matmul(G[k, :, :], x)  # [N, C] perform GCN
+            support = self.dropout(support)
+            support_list.append(support)  # k * [N, C]
+        support_cat = torch.cat(support_list, dim=-1)  # [N, k * C]
+        output = torch.matmul(support_cat, self.W) + self.b  # [N, H_out]
+
+        return output
+
+
+class ADFGCN_onehot(nn.Module):
     def __init__(
         self,
         device,
         adj_path,
         num_nodes=5298,
-        input_dim=6,
+        input_dim=2666,
         output_dim=11,
         hidden_dim=32,
-        node_embedding_dim=32,
-        cheb_k=3,
-        num_layers=3,
+        node_embedding_dim=16,
+        cheb_k=1,
+        num_layers=2,
         dropout=0.1,
     ):
         super().__init__()
@@ -217,11 +220,19 @@ class ADFGCN(nn.Module):
         return torch.stack(P_k, dim=0)  # (K, N, N) or (2*K, N, N) for bidirection
 
 
-if __name__ == "__main__":
-    model = ADFGCN(
-        device=torch.device("cpu"),
-        adj_path="../data/adj.npz",
-        num_layers=3,
-        node_embedding_dim=32,
-    )
-    summary(model, [5298, 6], device="cpu")
+class MLP_onehot(nn.Module):
+    def __init__(self, input_dim=2666, output_dim=11, hidden_dim=32):
+        super().__init__()
+
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        self.hidden_dim = hidden_dim
+
+        self.mlp = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(inplace=True),
+            nn.Linear(hidden_dim, output_dim),
+        )
+
+    def forward(self, x):
+        return self.mlp(x)

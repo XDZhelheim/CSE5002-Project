@@ -1,0 +1,489 @@
+x-(5298, 6)	y-(5298,)
+
+--------- ADFGCN ---------
+{
+    "lr": 0.01,
+    "weight_decay": 0.001,
+    "milestones": [
+        10
+    ],
+    "clip_grad": 5,
+    "max_epochs": 1000,
+    "early_stop": 50,
+    "pass_device": true,
+    "model_args": {
+        "num_nodes": 5298,
+        "adj_path": "../data/adj.npz",
+        "input_classes_list": [
+            6,
+            3,
+            43,
+            44,
+            64,
+            2506
+        ],
+        "embedding_dim": 8,
+        "output_dim": 11,
+        "hidden_dim": 32,
+        "node_embedding_dim": 16,
+        "cheb_k": 1,
+        "num_layers": 2,
+        "dropout": 0.1,
+        "device": "cuda:0"
+    }
+}
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+ADFGCN                                   [5298, 11]                169,536
+├─ModuleList: 1-1                        --                        --
+│    └─Embedding: 2-1                    [5298, 8]                 48
+│    └─Embedding: 2-2                    [5298, 8]                 24
+│    └─Embedding: 2-3                    [5298, 8]                 344
+│    └─Embedding: 2-4                    [5298, 8]                 352
+│    └─Embedding: 2-5                    [5298, 8]                 512
+│    └─Embedding: 2-6                    [5298, 8]                 20,048
+├─Linear: 1-2                            [5298, 32]                1,568
+├─ModuleList: 1-3                        --                        --
+│    └─DFGCN: 2-7                        [5298, 32]                5,152
+│    │    └─Dropout: 3-1                 [5298, 32]                --
+│    │    └─Dropout: 3-2                 [5298, 32]                --
+│    │    └─Dropout: 3-3                 [5298, 32]                --
+│    │    └─Dropout: 3-4                 [5298, 32]                --
+│    │    └─Dropout: 3-5                 [5298, 32]                --
+│    └─DFGCN: 2-8                        [5298, 32]                5,152
+│    │    └─Dropout: 3-6                 [5298, 32]                --
+│    │    └─Dropout: 3-7                 [5298, 32]                --
+│    │    └─Dropout: 3-8                 [5298, 32]                --
+│    │    └─Dropout: 3-9                 [5298, 32]                --
+│    │    └─Dropout: 3-10                [5298, 32]                --
+├─Sequential: 1-4                        [5298, 11]                --
+│    └─Linear: 2-9                       [5298, 32]                2,080
+│    └─ReLU: 2-10                        [5298, 32]                --
+│    └─Dropout: 2-11                     [5298, 32]                --
+│    └─Linear: 2-12                      [5298, 11]                363
+==========================================================================================
+Total params: 205,179
+Trainable params: 205,179
+Non-trainable params: 0
+Total mult-adds (M): 134.25
+==========================================================================================
+Input size (MB): 0.13
+Forward/backward pass size (MB): 5.21
+Params size (MB): 0.10
+Estimated Total Size (MB): 5.44
+==========================================================================================
+
+Loss: CrossEntropyLoss
+
+2023-05-20 20:03:09.446458 Epoch 1 	Train Loss = 2.48147 Train acc = 0.02736  Val acc = 0.18200 
+2023-05-20 20:03:09.672309 Epoch 2 	Train Loss = 2.17014 Train acc = 0.20219  Val acc = 0.15600 
+2023-05-20 20:03:09.897267 Epoch 3 	Train Loss = 2.00025 Train acc = 0.18836  Val acc = 0.27000 
+2023-05-20 20:03:10.121297 Epoch 4 	Train Loss = 1.89027 Train acc = 0.25605  Val acc = 0.33800 
+2023-05-20 20:03:10.345895 Epoch 5 	Train Loss = 1.79081 Train acc = 0.30674  Val acc = 0.40000 
+2023-05-20 20:03:10.577843 Epoch 6 	Train Loss = 1.62337 Train acc = 0.34821  Val acc = 0.40000 
+2023-05-20 20:03:10.792121 Epoch 7 	Train Loss = 1.60930 Train acc = 0.34389  Val acc = 0.39600 
+2023-05-20 20:03:11.020878 Epoch 8 	Train Loss = 1.56832 Train acc = 0.35081  Val acc = 0.41400 
+2023-05-20 20:03:11.245769 Epoch 9 	Train Loss = 1.51410 Train acc = 0.38220  Val acc = 0.42400 
+2023-05-20 20:03:11.470221 Epoch 10 	Train Loss = 1.46539 Train acc = 0.38882  Val acc = 0.47400 
+2023-05-20 20:03:11.698227 Epoch 11 	Train Loss = 1.41336 Train acc = 0.43952  Val acc = 0.47800 
+2023-05-20 20:03:11.923464 Epoch 12 	Train Loss = 1.42365 Train acc = 0.41475  Val acc = 0.48600 
+2023-05-20 20:03:12.140469 Epoch 13 	Train Loss = 1.40213 Train acc = 0.42224  Val acc = 0.47800 
+2023-05-20 20:03:12.364063 Epoch 14 	Train Loss = 1.38905 Train acc = 0.44758  Val acc = 0.49000 
+2023-05-20 20:03:12.585385 Epoch 15 	Train Loss = 1.38490 Train acc = 0.44470  Val acc = 0.50800 
+2023-05-20 20:03:12.817307 Epoch 16 	Train Loss = 1.36696 Train acc = 0.44355  Val acc = 0.50200 
+2023-05-20 20:03:13.041509 Epoch 17 	Train Loss = 1.36151 Train acc = 0.43577  Val acc = 0.50400 
+2023-05-20 20:03:13.264081 Epoch 18 	Train Loss = 1.33993 Train acc = 0.44758  Val acc = 0.50800 
+2023-05-20 20:03:13.488574 Epoch 19 	Train Loss = 1.34012 Train acc = 0.45853  Val acc = 0.51200 
+2023-05-20 20:03:13.714093 Epoch 20 	Train Loss = 1.33920 Train acc = 0.45824  Val acc = 0.50800 
+2023-05-20 20:03:13.930900 Epoch 21 	Train Loss = 1.32228 Train acc = 0.47638  Val acc = 0.49400 
+2023-05-20 20:03:14.157737 Epoch 22 	Train Loss = 1.31868 Train acc = 0.46400  Val acc = 0.49000 
+2023-05-20 20:03:14.377992 Epoch 23 	Train Loss = 1.31996 Train acc = 0.45968  Val acc = 0.48400 
+2023-05-20 20:03:14.601120 Epoch 24 	Train Loss = 1.31221 Train acc = 0.47005  Val acc = 0.47800 
+2023-05-20 20:03:14.828509 Epoch 25 	Train Loss = 1.30630 Train acc = 0.46717  Val acc = 0.47800 
+2023-05-20 20:03:15.053399 Epoch 26 	Train Loss = 1.29443 Train acc = 0.48099  Val acc = 0.48600 
+2023-05-20 20:03:15.275028 Epoch 27 	Train Loss = 1.28211 Train acc = 0.48877  Val acc = 0.50200 
+2023-05-20 20:03:15.505936 Epoch 28 	Train Loss = 1.29355 Train acc = 0.47667  Val acc = 0.51600 
+2023-05-20 20:03:15.720472 Epoch 29 	Train Loss = 1.27076 Train acc = 0.48646  Val acc = 0.52400 
+2023-05-20 20:03:15.941705 Epoch 30 	Train Loss = 1.27253 Train acc = 0.49424  Val acc = 0.53000 
+2023-05-20 20:03:16.165411 Epoch 31 	Train Loss = 1.25780 Train acc = 0.49798  Val acc = 0.53800 
+2023-05-20 20:03:16.388784 Epoch 32 	Train Loss = 1.25349 Train acc = 0.49194  Val acc = 0.54200 
+2023-05-20 20:03:16.612539 Epoch 33 	Train Loss = 1.24010 Train acc = 0.51325  Val acc = 0.55200 
+2023-05-20 20:03:16.839147 Epoch 34 	Train Loss = 1.24138 Train acc = 0.50806  Val acc = 0.55200 
+2023-05-20 20:03:17.063445 Epoch 35 	Train Loss = 1.22700 Train acc = 0.51008  Val acc = 0.55600 
+2023-05-20 20:03:17.290478 Epoch 36 	Train Loss = 1.21824 Train acc = 0.51901  Val acc = 0.56000 
+2023-05-20 20:03:17.514756 Epoch 37 	Train Loss = 1.22205 Train acc = 0.51469  Val acc = 0.56200 
+2023-05-20 20:03:17.735638 Epoch 38 	Train Loss = 1.21118 Train acc = 0.51671  Val acc = 0.57600 
+2023-05-20 20:03:17.962114 Epoch 39 	Train Loss = 1.20236 Train acc = 0.51728  Val acc = 0.57400 
+2023-05-20 20:03:18.187745 Epoch 40 	Train Loss = 1.19962 Train acc = 0.53687  Val acc = 0.57400 
+2023-05-20 20:03:18.411242 Epoch 41 	Train Loss = 1.18621 Train acc = 0.53888  Val acc = 0.56400 
+2023-05-20 20:03:18.635401 Epoch 42 	Train Loss = 1.18067 Train acc = 0.54090  Val acc = 0.56800 
+2023-05-20 20:03:18.859807 Epoch 43 	Train Loss = 1.16792 Train acc = 0.54407  Val acc = 0.56600 
+2023-05-20 20:03:19.082676 Epoch 44 	Train Loss = 1.16572 Train acc = 0.54176  Val acc = 0.57200 
+2023-05-20 20:03:19.302371 Epoch 45 	Train Loss = 1.16693 Train acc = 0.53975  Val acc = 0.58000 
+2023-05-20 20:03:19.530223 Epoch 46 	Train Loss = 1.15534 Train acc = 0.55472  Val acc = 0.58000 
+2023-05-20 20:03:19.750547 Epoch 47 	Train Loss = 1.15021 Train acc = 0.55962  Val acc = 0.58200 
+2023-05-20 20:03:19.976043 Epoch 48 	Train Loss = 1.14416 Train acc = 0.55213  Val acc = 0.59000 
+2023-05-20 20:03:20.197693 Epoch 49 	Train Loss = 1.14074 Train acc = 0.54695  Val acc = 0.58200 
+2023-05-20 20:03:20.423034 Epoch 50 	Train Loss = 1.12179 Train acc = 0.56077  Val acc = 0.57200 
+2023-05-20 20:03:20.644519 Epoch 51 	Train Loss = 1.12707 Train acc = 0.55386  Val acc = 0.58600 
+2023-05-20 20:03:20.868691 Epoch 52 	Train Loss = 1.12103 Train acc = 0.56596  Val acc = 0.59200 
+2023-05-20 20:03:21.092757 Epoch 53 	Train Loss = 1.12266 Train acc = 0.55732  Val acc = 0.59600 
+2023-05-20 20:03:21.320340 Epoch 54 	Train Loss = 1.10841 Train acc = 0.57028  Val acc = 0.59000 
+2023-05-20 20:03:21.540465 Epoch 55 	Train Loss = 1.11356 Train acc = 0.56999  Val acc = 0.59200 
+2023-05-20 20:03:21.766204 Epoch 56 	Train Loss = 1.09547 Train acc = 0.57460  Val acc = 0.58000 
+2023-05-20 20:03:21.990584 Epoch 57 	Train Loss = 1.09523 Train acc = 0.57632  Val acc = 0.59400 
+2023-05-20 20:03:22.214754 Epoch 58 	Train Loss = 1.09210 Train acc = 0.58209  Val acc = 0.59600 
+2023-05-20 20:03:22.439104 Epoch 59 	Train Loss = 1.06384 Train acc = 0.58785  Val acc = 0.59800 
+2023-05-20 20:03:22.662792 Epoch 60 	Train Loss = 1.07518 Train acc = 0.57316  Val acc = 0.59200 
+2023-05-20 20:03:22.884446 Epoch 61 	Train Loss = 1.07429 Train acc = 0.58439  Val acc = 0.58800 
+2023-05-20 20:03:23.101114 Epoch 62 	Train Loss = 1.06792 Train acc = 0.58986  Val acc = 0.59400 
+2023-05-20 20:03:23.324413 Epoch 63 	Train Loss = 1.06562 Train acc = 0.59245  Val acc = 0.60000 
+2023-05-20 20:03:23.551860 Epoch 64 	Train Loss = 1.06886 Train acc = 0.58727  Val acc = 0.60000 
+2023-05-20 20:03:23.775270 Epoch 65 	Train Loss = 1.05168 Train acc = 0.59130  Val acc = 0.60000 
+2023-05-20 20:03:23.996326 Epoch 66 	Train Loss = 1.04864 Train acc = 0.60455  Val acc = 0.59800 
+2023-05-20 20:03:24.219174 Epoch 67 	Train Loss = 1.04982 Train acc = 0.59476  Val acc = 0.59400 
+2023-05-20 20:03:24.443010 Epoch 68 	Train Loss = 1.02812 Train acc = 0.59821  Val acc = 0.59400 
+2023-05-20 20:03:24.665010 Epoch 69 	Train Loss = 1.03238 Train acc = 0.60282  Val acc = 0.59600 
+2023-05-20 20:03:24.876917 Epoch 70 	Train Loss = 1.03281 Train acc = 0.60541  Val acc = 0.60800 
+2023-05-20 20:03:25.102058 Epoch 71 	Train Loss = 1.02994 Train acc = 0.60023  Val acc = 0.60800 
+2023-05-20 20:03:25.325708 Epoch 72 	Train Loss = 1.01533 Train acc = 0.60801  Val acc = 0.61000 
+2023-05-20 20:03:25.549870 Epoch 73 	Train Loss = 1.01340 Train acc = 0.61722  Val acc = 0.61000 
+2023-05-20 20:03:25.772401 Epoch 74 	Train Loss = 1.00790 Train acc = 0.61233  Val acc = 0.61200 
+2023-05-20 20:03:25.998029 Epoch 75 	Train Loss = 1.01904 Train acc = 0.60685  Val acc = 0.61400 
+2023-05-20 20:03:26.217886 Epoch 76 	Train Loss = 1.00582 Train acc = 0.61377  Val acc = 0.60600 
+2023-05-20 20:03:26.439893 Epoch 77 	Train Loss = 0.99068 Train acc = 0.61578  Val acc = 0.61400 
+2023-05-20 20:03:26.661611 Epoch 78 	Train Loss = 1.00103 Train acc = 0.61722  Val acc = 0.61000 
+2023-05-20 20:03:26.884350 Epoch 79 	Train Loss = 1.00064 Train acc = 0.62126  Val acc = 0.61200 
+2023-05-20 20:03:27.109493 Epoch 80 	Train Loss = 0.98739 Train acc = 0.62414  Val acc = 0.61600 
+2023-05-20 20:03:27.334625 Epoch 81 	Train Loss = 0.98594 Train acc = 0.62414  Val acc = 0.61800 
+2023-05-20 20:03:27.539840 Epoch 82 	Train Loss = 0.98518 Train acc = 0.62529  Val acc = 0.62200 
+2023-05-20 20:03:27.765612 Epoch 83 	Train Loss = 0.97156 Train acc = 0.62990  Val acc = 0.62200 
+2023-05-20 20:03:27.991200 Epoch 84 	Train Loss = 0.97053 Train acc = 0.63335  Val acc = 0.62400 
+2023-05-20 20:03:28.213500 Epoch 85 	Train Loss = 0.97523 Train acc = 0.62990  Val acc = 0.62200 
+2023-05-20 20:03:28.438112 Epoch 86 	Train Loss = 0.96484 Train acc = 0.62903  Val acc = 0.62200 
+2023-05-20 20:03:28.663131 Epoch 87 	Train Loss = 0.96137 Train acc = 0.63738  Val acc = 0.62400 
+2023-05-20 20:03:28.878699 Epoch 88 	Train Loss = 0.95310 Train acc = 0.63969  Val acc = 0.62800 
+2023-05-20 20:03:29.104231 Epoch 89 	Train Loss = 0.96731 Train acc = 0.62298  Val acc = 0.62400 
+2023-05-20 20:03:29.319160 Epoch 90 	Train Loss = 0.95444 Train acc = 0.63191  Val acc = 0.62800 
+2023-05-20 20:03:29.545184 Epoch 91 	Train Loss = 0.93921 Train acc = 0.63882  Val acc = 0.62600 
+2023-05-20 20:03:29.772398 Epoch 92 	Train Loss = 0.94839 Train acc = 0.63738  Val acc = 0.62800 
+2023-05-20 20:03:29.995247 Epoch 93 	Train Loss = 0.95821 Train acc = 0.63076  Val acc = 0.63000 
+2023-05-20 20:03:30.217921 Epoch 94 	Train Loss = 0.94185 Train acc = 0.63940  Val acc = 0.63200 
+2023-05-20 20:03:30.441231 Epoch 95 	Train Loss = 0.93657 Train acc = 0.64113  Val acc = 0.63000 
+2023-05-20 20:03:30.663496 Epoch 96 	Train Loss = 0.92888 Train acc = 0.64718  Val acc = 0.62800 
+2023-05-20 20:03:30.873359 Epoch 97 	Train Loss = 0.92264 Train acc = 0.64487  Val acc = 0.63400 
+2023-05-20 20:03:31.098262 Epoch 98 	Train Loss = 0.93182 Train acc = 0.64372  Val acc = 0.63400 
+2023-05-20 20:03:31.323704 Epoch 99 	Train Loss = 0.92814 Train acc = 0.64459  Val acc = 0.63200 
+2023-05-20 20:03:31.549474 Epoch 100 	Train Loss = 0.91707 Train acc = 0.65351  Val acc = 0.63600 
+2023-05-20 20:03:31.774640 Epoch 101 	Train Loss = 0.91559 Train acc = 0.65179  Val acc = 0.63600 
+2023-05-20 20:03:32.000079 Epoch 102 	Train Loss = 0.91393 Train acc = 0.64862  Val acc = 0.63400 
+2023-05-20 20:03:32.224619 Epoch 103 	Train Loss = 0.91516 Train acc = 0.64804  Val acc = 0.64600 
+2023-05-20 20:03:32.449486 Epoch 104 	Train Loss = 0.90947 Train acc = 0.65121  Val acc = 0.64600 
+2023-05-20 20:03:32.661415 Epoch 105 	Train Loss = 0.91053 Train acc = 0.65582  Val acc = 0.64800 
+2023-05-20 20:03:32.885727 Epoch 106 	Train Loss = 0.90101 Train acc = 0.65639  Val acc = 0.63800 
+2023-05-20 20:03:33.109139 Epoch 107 	Train Loss = 0.89655 Train acc = 0.65092  Val acc = 0.63400 
+2023-05-20 20:03:33.332703 Epoch 108 	Train Loss = 0.89911 Train acc = 0.65553  Val acc = 0.64400 
+2023-05-20 20:03:33.554224 Epoch 109 	Train Loss = 0.89499 Train acc = 0.65092  Val acc = 0.64400 
+2023-05-20 20:03:33.779844 Epoch 110 	Train Loss = 0.89307 Train acc = 0.65726  Val acc = 0.64000 
+2023-05-20 20:03:33.996492 Epoch 111 	Train Loss = 0.89604 Train acc = 0.65236  Val acc = 0.64000 
+2023-05-20 20:03:34.220071 Epoch 112 	Train Loss = 0.89725 Train acc = 0.66331  Val acc = 0.64800 
+2023-05-20 20:03:34.438939 Epoch 113 	Train Loss = 0.88668 Train acc = 0.66215  Val acc = 0.64400 
+2023-05-20 20:03:34.664396 Epoch 114 	Train Loss = 0.88343 Train acc = 0.66187  Val acc = 0.64800 
+2023-05-20 20:03:34.889528 Epoch 115 	Train Loss = 0.87866 Train acc = 0.66302  Val acc = 0.65000 
+2023-05-20 20:03:35.113821 Epoch 116 	Train Loss = 0.88400 Train acc = 0.66359  Val acc = 0.65600 
+2023-05-20 20:03:35.318837 Epoch 117 	Train Loss = 0.87489 Train acc = 0.65755  Val acc = 0.65200 
+2023-05-20 20:03:35.543939 Epoch 118 	Train Loss = 0.88748 Train acc = 0.65985  Val acc = 0.65200 
+2023-05-20 20:03:35.770502 Epoch 119 	Train Loss = 0.86528 Train acc = 0.66849  Val acc = 0.65600 
+2023-05-20 20:03:35.993984 Epoch 120 	Train Loss = 0.87340 Train acc = 0.66331  Val acc = 0.66400 
+2023-05-20 20:03:36.219393 Epoch 121 	Train Loss = 0.86516 Train acc = 0.66907  Val acc = 0.66000 
+2023-05-20 20:03:36.444536 Epoch 122 	Train Loss = 0.87641 Train acc = 0.66590  Val acc = 0.65400 
+2023-05-20 20:03:36.660508 Epoch 123 	Train Loss = 0.85935 Train acc = 0.67713  Val acc = 0.66000 
+2023-05-20 20:03:36.887978 Epoch 124 	Train Loss = 0.86187 Train acc = 0.66676  Val acc = 0.66800 
+2023-05-20 20:03:37.105437 Epoch 125 	Train Loss = 0.87368 Train acc = 0.66532  Val acc = 0.67200 
+2023-05-20 20:03:37.331397 Epoch 126 	Train Loss = 0.85321 Train acc = 0.66820  Val acc = 0.66800 
+2023-05-20 20:03:37.556426 Epoch 127 	Train Loss = 0.85335 Train acc = 0.67828  Val acc = 0.66600 
+2023-05-20 20:03:37.782283 Epoch 128 	Train Loss = 0.85173 Train acc = 0.68030  Val acc = 0.66800 
+2023-05-20 20:03:38.001271 Epoch 129 	Train Loss = 0.85170 Train acc = 0.67800  Val acc = 0.68000 
+2023-05-20 20:03:38.225673 Epoch 130 	Train Loss = 0.85591 Train acc = 0.67166  Val acc = 0.68000 
+2023-05-20 20:03:38.447269 Epoch 131 	Train Loss = 0.84370 Train acc = 0.67857  Val acc = 0.66800 
+2023-05-20 20:03:38.671926 Epoch 132 	Train Loss = 0.85079 Train acc = 0.66849  Val acc = 0.66400 
+2023-05-20 20:03:38.893278 Epoch 133 	Train Loss = 0.84778 Train acc = 0.67051  Val acc = 0.67400 
+2023-05-20 20:03:39.119187 Epoch 134 	Train Loss = 0.83807 Train acc = 0.67310  Val acc = 0.68400 
+2023-05-20 20:03:39.343389 Epoch 135 	Train Loss = 0.82000 Train acc = 0.68376  Val acc = 0.68200 
+2023-05-20 20:03:39.566737 Epoch 136 	Train Loss = 0.83404 Train acc = 0.68232  Val acc = 0.68200 
+2023-05-20 20:03:39.787277 Epoch 137 	Train Loss = 0.83563 Train acc = 0.68174  Val acc = 0.68800 
+2023-05-20 20:03:40.013727 Epoch 138 	Train Loss = 0.83223 Train acc = 0.67915  Val acc = 0.69000 
+2023-05-20 20:03:40.237556 Epoch 139 	Train Loss = 0.81954 Train acc = 0.68088  Val acc = 0.69000 
+2023-05-20 20:03:40.462511 Epoch 140 	Train Loss = 0.82842 Train acc = 0.67800  Val acc = 0.69000 
+2023-05-20 20:03:40.684972 Epoch 141 	Train Loss = 0.82304 Train acc = 0.67598  Val acc = 0.68200 
+2023-05-20 20:03:40.911260 Epoch 142 	Train Loss = 0.82098 Train acc = 0.68952  Val acc = 0.69200 
+2023-05-20 20:03:41.133650 Epoch 143 	Train Loss = 0.81239 Train acc = 0.68980  Val acc = 0.69000 
+2023-05-20 20:03:41.357709 Epoch 144 	Train Loss = 0.81694 Train acc = 0.68491  Val acc = 0.69200 
+2023-05-20 20:03:41.583113 Epoch 145 	Train Loss = 0.81112 Train acc = 0.69009  Val acc = 0.68400 
+2023-05-20 20:03:41.808750 Epoch 146 	Train Loss = 0.81081 Train acc = 0.68692  Val acc = 0.69200 
+2023-05-20 20:03:42.025469 Epoch 147 	Train Loss = 0.81226 Train acc = 0.68606  Val acc = 0.69400 
+2023-05-20 20:03:42.247917 Epoch 148 	Train Loss = 0.81568 Train acc = 0.68779  Val acc = 0.69200 
+2023-05-20 20:03:42.475883 Epoch 149 	Train Loss = 0.81147 Train acc = 0.68664  Val acc = 0.69400 
+2023-05-20 20:03:42.701648 Epoch 150 	Train Loss = 0.79985 Train acc = 0.68836  Val acc = 0.69200 
+2023-05-20 20:03:42.925613 Epoch 151 	Train Loss = 0.80657 Train acc = 0.68779  Val acc = 0.69200 
+2023-05-20 20:03:43.146854 Epoch 152 	Train Loss = 0.80424 Train acc = 0.68433  Val acc = 0.68800 
+2023-05-20 20:03:43.367285 Epoch 153 	Train Loss = 0.79999 Train acc = 0.69499  Val acc = 0.69000 
+2023-05-20 20:03:43.590696 Epoch 154 	Train Loss = 0.79574 Train acc = 0.69556  Val acc = 0.69000 
+2023-05-20 20:03:43.812950 Epoch 155 	Train Loss = 0.80449 Train acc = 0.68520  Val acc = 0.69400 
+2023-05-20 20:03:44.041417 Epoch 156 	Train Loss = 0.78760 Train acc = 0.69614  Val acc = 0.69600 
+2023-05-20 20:03:44.263253 Epoch 157 	Train Loss = 0.79518 Train acc = 0.69297  Val acc = 0.69800 
+2023-05-20 20:03:44.486334 Epoch 158 	Train Loss = 0.78766 Train acc = 0.69441  Val acc = 0.70000 
+2023-05-20 20:03:44.709704 Epoch 159 	Train Loss = 0.78818 Train acc = 0.69153  Val acc = 0.69800 
+2023-05-20 20:03:44.933943 Epoch 160 	Train Loss = 0.79035 Train acc = 0.68491  Val acc = 0.70200 
+2023-05-20 20:03:45.160114 Epoch 161 	Train Loss = 0.79098 Train acc = 0.68952  Val acc = 0.70000 
+2023-05-20 20:03:45.383969 Epoch 162 	Train Loss = 0.78374 Train acc = 0.69873  Val acc = 0.69800 
+2023-05-20 20:03:45.605076 Epoch 163 	Train Loss = 0.78865 Train acc = 0.69470  Val acc = 0.69600 
+2023-05-20 20:03:45.830003 Epoch 164 	Train Loss = 0.78630 Train acc = 0.70507  Val acc = 0.70400 
+2023-05-20 20:03:46.052946 Epoch 165 	Train Loss = 0.78466 Train acc = 0.70305  Val acc = 0.70200 
+2023-05-20 20:03:46.276088 Epoch 166 	Train Loss = 0.77671 Train acc = 0.70305  Val acc = 0.70600 
+2023-05-20 20:03:46.500972 Epoch 167 	Train Loss = 0.78630 Train acc = 0.70363  Val acc = 0.70200 
+2023-05-20 20:03:46.722927 Epoch 168 	Train Loss = 0.77308 Train acc = 0.69441  Val acc = 0.70600 
+2023-05-20 20:03:46.946119 Epoch 169 	Train Loss = 0.77200 Train acc = 0.70132  Val acc = 0.71000 
+2023-05-20 20:03:47.170141 Epoch 170 	Train Loss = 0.77005 Train acc = 0.70363  Val acc = 0.70800 
+2023-05-20 20:03:47.394060 Epoch 171 	Train Loss = 0.76619 Train acc = 0.69988  Val acc = 0.71000 
+2023-05-20 20:03:47.616991 Epoch 172 	Train Loss = 0.77082 Train acc = 0.70651  Val acc = 0.70800 
+2023-05-20 20:03:47.839242 Epoch 173 	Train Loss = 0.77207 Train acc = 0.69931  Val acc = 0.70800 
+2023-05-20 20:03:48.065522 Epoch 174 	Train Loss = 0.77509 Train acc = 0.70219  Val acc = 0.71800 
+2023-05-20 20:03:48.290215 Epoch 175 	Train Loss = 0.77223 Train acc = 0.69672  Val acc = 0.70600 
+2023-05-20 20:03:48.512743 Epoch 176 	Train Loss = 0.76609 Train acc = 0.70795  Val acc = 0.70800 
+2023-05-20 20:03:48.737760 Epoch 177 	Train Loss = 0.75105 Train acc = 0.70939  Val acc = 0.70800 
+2023-05-20 20:03:48.963424 Epoch 178 	Train Loss = 0.75961 Train acc = 0.70651  Val acc = 0.71200 
+2023-05-20 20:03:49.187419 Epoch 179 	Train Loss = 0.76777 Train acc = 0.70737  Val acc = 0.71000 
+2023-05-20 20:03:49.412672 Epoch 180 	Train Loss = 0.76161 Train acc = 0.70881  Val acc = 0.70800 
+2023-05-20 20:03:49.633387 Epoch 181 	Train Loss = 0.75861 Train acc = 0.70881  Val acc = 0.71000 
+2023-05-20 20:03:49.861813 Epoch 182 	Train Loss = 0.75514 Train acc = 0.71198  Val acc = 0.71200 
+2023-05-20 20:03:50.085274 Epoch 183 	Train Loss = 0.75491 Train acc = 0.70910  Val acc = 0.70800 
+2023-05-20 20:03:50.309938 Epoch 184 	Train Loss = 0.74241 Train acc = 0.71976  Val acc = 0.71400 
+2023-05-20 20:03:50.532681 Epoch 185 	Train Loss = 0.74940 Train acc = 0.71141  Val acc = 0.71000 
+2023-05-20 20:03:50.758143 Epoch 186 	Train Loss = 0.74432 Train acc = 0.70939  Val acc = 0.71200 
+2023-05-20 20:03:50.977533 Epoch 187 	Train Loss = 0.74829 Train acc = 0.71141  Val acc = 0.72000 
+2023-05-20 20:03:51.201903 Epoch 188 	Train Loss = 0.75329 Train acc = 0.70565  Val acc = 0.71600 
+2023-05-20 20:03:51.428909 Epoch 189 	Train Loss = 0.74923 Train acc = 0.71285  Val acc = 0.71000 
+2023-05-20 20:03:51.654116 Epoch 190 	Train Loss = 0.75651 Train acc = 0.70593  Val acc = 0.71000 
+2023-05-20 20:03:51.879257 Epoch 191 	Train Loss = 0.74553 Train acc = 0.70680  Val acc = 0.71400 
+2023-05-20 20:03:52.102293 Epoch 192 	Train Loss = 0.73832 Train acc = 0.71025  Val acc = 0.71000 
+2023-05-20 20:03:52.324364 Epoch 193 	Train Loss = 0.75497 Train acc = 0.70997  Val acc = 0.71000 
+2023-05-20 20:03:52.549523 Epoch 194 	Train Loss = 0.74625 Train acc = 0.71832  Val acc = 0.71600 
+2023-05-20 20:03:52.767028 Epoch 195 	Train Loss = 0.74031 Train acc = 0.71112  Val acc = 0.71200 
+2023-05-20 20:03:52.994404 Epoch 196 	Train Loss = 0.73717 Train acc = 0.71630  Val acc = 0.71400 
+2023-05-20 20:03:53.215527 Epoch 197 	Train Loss = 0.74635 Train acc = 0.70709  Val acc = 0.71400 
+2023-05-20 20:03:53.440793 Epoch 198 	Train Loss = 0.73351 Train acc = 0.71774  Val acc = 0.70800 
+2023-05-20 20:03:53.665547 Epoch 199 	Train Loss = 0.74399 Train acc = 0.71947  Val acc = 0.71200 
+2023-05-20 20:03:53.888603 Epoch 200 	Train Loss = 0.73855 Train acc = 0.71601  Val acc = 0.71200 
+2023-05-20 20:03:54.112503 Epoch 201 	Train Loss = 0.72870 Train acc = 0.71745  Val acc = 0.72200 
+2023-05-20 20:03:54.337580 Epoch 202 	Train Loss = 0.73575 Train acc = 0.71918  Val acc = 0.72000 
+2023-05-20 20:03:54.554854 Epoch 203 	Train Loss = 0.73307 Train acc = 0.71429  Val acc = 0.71600 
+2023-05-20 20:03:54.776249 Epoch 204 	Train Loss = 0.73833 Train acc = 0.71774  Val acc = 0.71800 
+2023-05-20 20:03:54.997545 Epoch 205 	Train Loss = 0.72726 Train acc = 0.71774  Val acc = 0.72000 
+2023-05-20 20:03:55.226247 Epoch 206 	Train Loss = 0.72770 Train acc = 0.71659  Val acc = 0.71400 
+2023-05-20 20:03:55.450235 Epoch 207 	Train Loss = 0.72524 Train acc = 0.71774  Val acc = 0.72000 
+2023-05-20 20:03:55.674608 Epoch 208 	Train Loss = 0.72624 Train acc = 0.72437  Val acc = 0.72200 
+2023-05-20 20:03:55.898287 Epoch 209 	Train Loss = 0.73302 Train acc = 0.71544  Val acc = 0.71600 
+2023-05-20 20:03:56.123723 Epoch 210 	Train Loss = 0.72136 Train acc = 0.71832  Val acc = 0.71200 
+2023-05-20 20:03:56.339188 Epoch 211 	Train Loss = 0.72179 Train acc = 0.71947  Val acc = 0.71200 
+2023-05-20 20:03:56.553870 Epoch 212 	Train Loss = 0.71780 Train acc = 0.72437  Val acc = 0.71200 
+2023-05-20 20:03:56.776515 Epoch 213 	Train Loss = 0.72299 Train acc = 0.71774  Val acc = 0.71600 
+2023-05-20 20:03:57.002176 Epoch 214 	Train Loss = 0.71943 Train acc = 0.71659  Val acc = 0.72000 
+2023-05-20 20:03:57.225052 Epoch 215 	Train Loss = 0.71361 Train acc = 0.72667  Val acc = 0.71600 
+2023-05-20 20:03:57.448557 Epoch 216 	Train Loss = 0.72075 Train acc = 0.72264  Val acc = 0.72000 
+2023-05-20 20:03:57.673795 Epoch 217 	Train Loss = 0.73022 Train acc = 0.71745  Val acc = 0.72400 
+2023-05-20 20:03:57.901176 Epoch 218 	Train Loss = 0.71844 Train acc = 0.71227  Val acc = 0.71400 
+2023-05-20 20:03:58.122912 Epoch 219 	Train Loss = 0.71457 Train acc = 0.72494  Val acc = 0.71200 
+2023-05-20 20:03:58.336439 Epoch 220 	Train Loss = 0.71162 Train acc = 0.72264  Val acc = 0.72400 
+2023-05-20 20:03:58.558585 Epoch 221 	Train Loss = 0.71290 Train acc = 0.72321  Val acc = 0.72600 
+2023-05-20 20:03:58.782836 Epoch 222 	Train Loss = 0.70945 Train acc = 0.72638  Val acc = 0.73200 
+2023-05-20 20:03:59.007625 Epoch 223 	Train Loss = 0.72033 Train acc = 0.71889  Val acc = 0.72000 
+2023-05-20 20:03:59.231968 Epoch 224 	Train Loss = 0.71281 Train acc = 0.72350  Val acc = 0.71800 
+2023-05-20 20:03:59.457614 Epoch 225 	Train Loss = 0.71109 Train acc = 0.72293  Val acc = 0.72600 
+2023-05-20 20:03:59.675834 Epoch 226 	Train Loss = 0.72383 Train acc = 0.71227  Val acc = 0.72200 
+2023-05-20 20:03:59.895318 Epoch 227 	Train Loss = 0.72327 Train acc = 0.71313  Val acc = 0.72200 
+2023-05-20 20:04:00.115041 Epoch 228 	Train Loss = 0.71405 Train acc = 0.72696  Val acc = 0.72200 
+2023-05-20 20:04:00.340056 Epoch 229 	Train Loss = 0.70973 Train acc = 0.72897  Val acc = 0.73200 
+2023-05-20 20:04:00.564196 Epoch 230 	Train Loss = 0.70644 Train acc = 0.73214  Val acc = 0.73200 
+2023-05-20 20:04:00.788215 Epoch 231 	Train Loss = 0.71468 Train acc = 0.72235  Val acc = 0.72000 
+2023-05-20 20:04:00.991795 Epoch 232 	Train Loss = 0.70836 Train acc = 0.71947  Val acc = 0.72200 
+2023-05-20 20:04:01.220210 Epoch 233 	Train Loss = 0.70584 Train acc = 0.72552  Val acc = 0.72000 
+2023-05-20 20:04:01.445787 Epoch 234 	Train Loss = 0.70003 Train acc = 0.72408  Val acc = 0.72600 
+2023-05-20 20:04:01.667357 Epoch 235 	Train Loss = 0.69613 Train acc = 0.73243  Val acc = 0.72600 
+2023-05-20 20:04:01.891283 Epoch 236 	Train Loss = 0.70371 Train acc = 0.72552  Val acc = 0.71800 
+2023-05-20 20:04:02.116566 Epoch 237 	Train Loss = 0.69595 Train acc = 0.72696  Val acc = 0.72200 
+2023-05-20 20:04:02.337820 Epoch 238 	Train Loss = 0.70712 Train acc = 0.72753  Val acc = 0.72600 
+2023-05-20 20:04:02.563106 Epoch 239 	Train Loss = 0.70224 Train acc = 0.73272  Val acc = 0.72400 
+2023-05-20 20:04:02.780231 Epoch 240 	Train Loss = 0.70756 Train acc = 0.72033  Val acc = 0.72400 
+2023-05-20 20:04:03.005335 Epoch 241 	Train Loss = 0.70245 Train acc = 0.72782  Val acc = 0.73000 
+2023-05-20 20:04:03.232125 Epoch 242 	Train Loss = 0.69101 Train acc = 0.72984  Val acc = 0.72400 
+2023-05-20 20:04:03.456626 Epoch 243 	Train Loss = 0.70501 Train acc = 0.73099  Val acc = 0.72000 
+2023-05-20 20:04:03.681518 Epoch 244 	Train Loss = 0.69827 Train acc = 0.73272  Val acc = 0.72800 
+2023-05-20 20:04:03.909955 Epoch 245 	Train Loss = 0.69940 Train acc = 0.72581  Val acc = 0.72800 
+2023-05-20 20:04:04.124686 Epoch 246 	Train Loss = 0.70058 Train acc = 0.73416  Val acc = 0.73000 
+2023-05-20 20:04:04.348829 Epoch 247 	Train Loss = 0.70203 Train acc = 0.72984  Val acc = 0.72600 
+2023-05-20 20:04:04.565022 Epoch 248 	Train Loss = 0.69754 Train acc = 0.72869  Val acc = 0.72200 
+2023-05-20 20:04:04.792862 Epoch 249 	Train Loss = 0.69934 Train acc = 0.73185  Val acc = 0.73600 
+2023-05-20 20:04:05.020156 Epoch 250 	Train Loss = 0.68846 Train acc = 0.73848  Val acc = 0.72600 
+2023-05-20 20:04:05.242799 Epoch 251 	Train Loss = 0.70178 Train acc = 0.72696  Val acc = 0.71600 
+2023-05-20 20:04:05.463027 Epoch 252 	Train Loss = 0.68513 Train acc = 0.73099  Val acc = 0.71800 
+2023-05-20 20:04:05.686560 Epoch 253 	Train Loss = 0.69144 Train acc = 0.72897  Val acc = 0.72800 
+2023-05-20 20:04:05.908926 Epoch 254 	Train Loss = 0.69109 Train acc = 0.72696  Val acc = 0.73600 
+2023-05-20 20:04:06.133256 Epoch 255 	Train Loss = 0.69154 Train acc = 0.73272  Val acc = 0.73000 
+2023-05-20 20:04:06.355183 Epoch 256 	Train Loss = 0.69764 Train acc = 0.73502  Val acc = 0.72600 
+2023-05-20 20:04:06.580961 Epoch 257 	Train Loss = 0.69396 Train acc = 0.72437  Val acc = 0.72400 
+2023-05-20 20:04:06.804514 Epoch 258 	Train Loss = 0.70056 Train acc = 0.72523  Val acc = 0.71800 
+2023-05-20 20:04:07.029405 Epoch 259 	Train Loss = 0.69309 Train acc = 0.72840  Val acc = 0.72800 
+2023-05-20 20:04:07.250775 Epoch 260 	Train Loss = 0.68741 Train acc = 0.73070  Val acc = 0.71400 
+2023-05-20 20:04:07.475047 Epoch 261 	Train Loss = 0.69107 Train acc = 0.72696  Val acc = 0.72000 
+2023-05-20 20:04:07.699863 Epoch 262 	Train Loss = 0.68740 Train acc = 0.73790  Val acc = 0.73200 
+2023-05-20 20:04:07.922738 Epoch 263 	Train Loss = 0.69007 Train acc = 0.73041  Val acc = 0.73400 
+2023-05-20 20:04:08.144826 Epoch 264 	Train Loss = 0.67400 Train acc = 0.74309  Val acc = 0.73000 
+2023-05-20 20:04:08.371347 Epoch 265 	Train Loss = 0.67579 Train acc = 0.73934  Val acc = 0.72400 
+2023-05-20 20:04:08.592062 Epoch 266 	Train Loss = 0.68109 Train acc = 0.74107  Val acc = 0.72400 
+2023-05-20 20:04:08.817821 Epoch 267 	Train Loss = 0.68643 Train acc = 0.73502  Val acc = 0.72600 
+2023-05-20 20:04:09.038131 Epoch 268 	Train Loss = 0.67734 Train acc = 0.73618  Val acc = 0.72000 
+2023-05-20 20:04:09.262413 Epoch 269 	Train Loss = 0.68423 Train acc = 0.73848  Val acc = 0.72800 
+2023-05-20 20:04:09.486467 Epoch 270 	Train Loss = 0.67897 Train acc = 0.73560  Val acc = 0.72400 
+2023-05-20 20:04:09.708570 Epoch 271 	Train Loss = 0.68871 Train acc = 0.72408  Val acc = 0.73800 
+2023-05-20 20:04:09.935247 Epoch 272 	Train Loss = 0.67935 Train acc = 0.73214  Val acc = 0.71600 
+2023-05-20 20:04:10.160877 Epoch 273 	Train Loss = 0.67394 Train acc = 0.73906  Val acc = 0.72200 
+2023-05-20 20:04:10.385163 Epoch 274 	Train Loss = 0.68215 Train acc = 0.73790  Val acc = 0.72800 
+2023-05-20 20:04:10.608284 Epoch 275 	Train Loss = 0.67346 Train acc = 0.73934  Val acc = 0.72600 
+2023-05-20 20:04:10.836681 Epoch 276 	Train Loss = 0.68934 Train acc = 0.73272  Val acc = 0.73000 
+2023-05-20 20:04:11.059376 Epoch 277 	Train Loss = 0.67048 Train acc = 0.74309  Val acc = 0.72800 
+2023-05-20 20:04:11.277510 Epoch 278 	Train Loss = 0.67307 Train acc = 0.73963  Val acc = 0.72800 
+2023-05-20 20:04:11.499391 Epoch 279 	Train Loss = 0.68085 Train acc = 0.73243  Val acc = 0.72600 
+2023-05-20 20:04:11.724090 Epoch 280 	Train Loss = 0.67817 Train acc = 0.73157  Val acc = 0.72600 
+2023-05-20 20:04:11.949410 Epoch 281 	Train Loss = 0.67540 Train acc = 0.73877  Val acc = 0.73200 
+2023-05-20 20:04:12.174869 Epoch 282 	Train Loss = 0.67351 Train acc = 0.73877  Val acc = 0.73000 
+2023-05-20 20:04:12.398888 Epoch 283 	Train Loss = 0.67678 Train acc = 0.73243  Val acc = 0.72600 
+2023-05-20 20:04:12.622759 Epoch 284 	Train Loss = 0.67448 Train acc = 0.73819  Val acc = 0.72600 
+2023-05-20 20:04:12.848517 Epoch 285 	Train Loss = 0.66971 Train acc = 0.73560  Val acc = 0.73000 
+2023-05-20 20:04:13.069895 Epoch 286 	Train Loss = 0.66934 Train acc = 0.74050  Val acc = 0.73200 
+2023-05-20 20:04:13.295903 Epoch 287 	Train Loss = 0.66919 Train acc = 0.73934  Val acc = 0.72800 
+2023-05-20 20:04:13.504147 Epoch 288 	Train Loss = 0.65272 Train acc = 0.74856  Val acc = 0.73200 
+2023-05-20 20:04:13.730125 Epoch 289 	Train Loss = 0.67308 Train acc = 0.73762  Val acc = 0.73200 
+2023-05-20 20:04:13.957463 Epoch 290 	Train Loss = 0.67208 Train acc = 0.73646  Val acc = 0.72400 
+2023-05-20 20:04:14.178822 Epoch 291 	Train Loss = 0.67867 Train acc = 0.72437  Val acc = 0.72600 
+2023-05-20 20:04:14.404252 Epoch 292 	Train Loss = 0.66783 Train acc = 0.73358  Val acc = 0.72800 
+2023-05-20 20:04:14.625673 Epoch 293 	Train Loss = 0.67666 Train acc = 0.73646  Val acc = 0.73800 
+2023-05-20 20:04:14.848426 Epoch 294 	Train Loss = 0.67153 Train acc = 0.73934  Val acc = 0.74000 
+2023-05-20 20:04:15.073473 Epoch 295 	Train Loss = 0.66118 Train acc = 0.74568  Val acc = 0.74000 
+2023-05-20 20:04:15.297399 Epoch 296 	Train Loss = 0.66525 Train acc = 0.74222  Val acc = 0.73000 
+2023-05-20 20:04:15.522418 Epoch 297 	Train Loss = 0.67385 Train acc = 0.73646  Val acc = 0.73800 
+2023-05-20 20:04:15.748021 Epoch 298 	Train Loss = 0.67094 Train acc = 0.73992  Val acc = 0.73400 
+2023-05-20 20:04:15.973206 Epoch 299 	Train Loss = 0.66516 Train acc = 0.74078  Val acc = 0.73200 
+2023-05-20 20:04:16.199821 Epoch 300 	Train Loss = 0.66982 Train acc = 0.74424  Val acc = 0.73400 
+2023-05-20 20:04:16.424893 Epoch 301 	Train Loss = 0.66211 Train acc = 0.73531  Val acc = 0.73000 
+2023-05-20 20:04:16.639096 Epoch 302 	Train Loss = 0.66199 Train acc = 0.73819  Val acc = 0.73000 
+2023-05-20 20:04:16.863236 Epoch 303 	Train Loss = 0.66135 Train acc = 0.74107  Val acc = 0.73200 
+2023-05-20 20:04:17.083246 Epoch 304 	Train Loss = 0.66841 Train acc = 0.73387  Val acc = 0.73600 
+2023-05-20 20:04:17.306694 Epoch 305 	Train Loss = 0.64754 Train acc = 0.74856  Val acc = 0.73000 
+2023-05-20 20:04:17.531107 Epoch 306 	Train Loss = 0.65520 Train acc = 0.75144  Val acc = 0.72600 
+2023-05-20 20:04:17.754030 Epoch 307 	Train Loss = 0.65743 Train acc = 0.74741  Val acc = 0.73000 
+2023-05-20 20:04:17.973728 Epoch 308 	Train Loss = 0.65677 Train acc = 0.73877  Val acc = 0.72600 
+2023-05-20 20:04:18.196065 Epoch 309 	Train Loss = 0.65959 Train acc = 0.73963  Val acc = 0.73200 
+2023-05-20 20:04:18.419857 Epoch 310 	Train Loss = 0.66309 Train acc = 0.74338  Val acc = 0.73000 
+2023-05-20 20:04:18.642180 Epoch 311 	Train Loss = 0.66377 Train acc = 0.73675  Val acc = 0.73200 
+2023-05-20 20:04:18.869640 Epoch 312 	Train Loss = 0.65693 Train acc = 0.75115  Val acc = 0.73200 
+2023-05-20 20:04:19.092506 Epoch 313 	Train Loss = 0.65795 Train acc = 0.74626  Val acc = 0.73000 
+2023-05-20 20:04:19.317250 Epoch 314 	Train Loss = 0.66386 Train acc = 0.74136  Val acc = 0.74000 
+2023-05-20 20:04:19.539949 Epoch 315 	Train Loss = 0.65537 Train acc = 0.74395  Val acc = 0.74000 
+2023-05-20 20:04:19.759408 Epoch 316 	Train Loss = 0.65532 Train acc = 0.73589  Val acc = 0.73400 
+2023-05-20 20:04:19.982970 Epoch 317 	Train Loss = 0.65111 Train acc = 0.74309  Val acc = 0.73000 
+2023-05-20 20:04:20.204878 Epoch 318 	Train Loss = 0.65608 Train acc = 0.74136  Val acc = 0.73400 
+2023-05-20 20:04:20.417752 Epoch 319 	Train Loss = 0.65441 Train acc = 0.73992  Val acc = 0.73400 
+2023-05-20 20:04:20.638052 Epoch 320 	Train Loss = 0.65802 Train acc = 0.73733  Val acc = 0.73600 
+2023-05-20 20:04:20.862149 Epoch 321 	Train Loss = 0.65686 Train acc = 0.75000  Val acc = 0.73000 
+2023-05-20 20:04:21.086067 Epoch 322 	Train Loss = 0.65719 Train acc = 0.74338  Val acc = 0.73200 
+2023-05-20 20:04:21.305542 Epoch 323 	Train Loss = 0.65867 Train acc = 0.74712  Val acc = 0.73200 
+2023-05-20 20:04:21.529063 Epoch 324 	Train Loss = 0.64798 Train acc = 0.74827  Val acc = 0.74200 
+2023-05-20 20:04:21.748483 Epoch 325 	Train Loss = 0.66571 Train acc = 0.73704  Val acc = 0.72800 
+2023-05-20 20:04:21.972835 Epoch 326 	Train Loss = 0.64791 Train acc = 0.74971  Val acc = 0.73200 
+2023-05-20 20:04:22.198844 Epoch 327 	Train Loss = 0.65406 Train acc = 0.74914  Val acc = 0.73800 
+2023-05-20 20:04:22.424918 Epoch 328 	Train Loss = 0.65471 Train acc = 0.74222  Val acc = 0.73800 
+2023-05-20 20:04:22.649213 Epoch 329 	Train Loss = 0.65184 Train acc = 0.75202  Val acc = 0.72800 
+2023-05-20 20:04:22.873673 Epoch 330 	Train Loss = 0.64425 Train acc = 0.74280  Val acc = 0.72800 
+2023-05-20 20:04:23.097093 Epoch 331 	Train Loss = 0.64414 Train acc = 0.75259  Val acc = 0.73200 
+2023-05-20 20:04:23.328321 Epoch 332 	Train Loss = 0.65167 Train acc = 0.74309  Val acc = 0.73800 
+2023-05-20 20:04:23.548404 Epoch 333 	Train Loss = 0.64961 Train acc = 0.74885  Val acc = 0.73400 
+2023-05-20 20:04:23.773213 Epoch 334 	Train Loss = 0.66001 Train acc = 0.74280  Val acc = 0.73200 
+2023-05-20 20:04:23.986982 Epoch 335 	Train Loss = 0.64505 Train acc = 0.74798  Val acc = 0.73800 
+2023-05-20 20:04:24.212015 Epoch 336 	Train Loss = 0.65271 Train acc = 0.74222  Val acc = 0.74000 
+2023-05-20 20:04:24.436994 Epoch 337 	Train Loss = 0.65350 Train acc = 0.74366  Val acc = 0.73600 
+2023-05-20 20:04:24.663838 Epoch 338 	Train Loss = 0.64502 Train acc = 0.74856  Val acc = 0.73000 
+2023-05-20 20:04:24.889206 Epoch 339 	Train Loss = 0.64282 Train acc = 0.74107  Val acc = 0.72800 
+2023-05-20 20:04:25.114306 Epoch 340 	Train Loss = 0.64661 Train acc = 0.74251  Val acc = 0.73800 
+2023-05-20 20:04:25.330605 Epoch 341 	Train Loss = 0.64666 Train acc = 0.74741  Val acc = 0.73600 
+2023-05-20 20:04:25.550297 Epoch 342 	Train Loss = 0.64440 Train acc = 0.74366  Val acc = 0.73200 
+2023-05-20 20:04:25.774388 Epoch 343 	Train Loss = 0.64247 Train acc = 0.74222  Val acc = 0.72800 
+2023-05-20 20:04:25.999588 Epoch 344 	Train Loss = 0.63466 Train acc = 0.75518  Val acc = 0.73800 
+2023-05-20 20:04:26.222620 Epoch 345 	Train Loss = 0.64740 Train acc = 0.74539  Val acc = 0.74400 
+2023-05-20 20:04:26.450050 Epoch 346 	Train Loss = 0.63731 Train acc = 0.75490  Val acc = 0.74000 
+2023-05-20 20:04:26.674589 Epoch 347 	Train Loss = 0.64070 Train acc = 0.75086  Val acc = 0.73400 
+2023-05-20 20:04:26.898292 Epoch 348 	Train Loss = 0.65031 Train acc = 0.74798  Val acc = 0.73400 
+2023-05-20 20:04:27.120511 Epoch 349 	Train Loss = 0.63606 Train acc = 0.75058  Val acc = 0.73200 
+2023-05-20 20:04:27.345162 Epoch 350 	Train Loss = 0.64114 Train acc = 0.75086  Val acc = 0.73400 
+2023-05-20 20:04:27.563585 Epoch 351 	Train Loss = 0.64245 Train acc = 0.75202  Val acc = 0.73000 
+2023-05-20 20:04:27.786285 Epoch 352 	Train Loss = 0.62645 Train acc = 0.75605  Val acc = 0.73000 
+2023-05-20 20:04:28.008245 Epoch 353 	Train Loss = 0.63749 Train acc = 0.74971  Val acc = 0.74200 
+2023-05-20 20:04:28.234972 Epoch 354 	Train Loss = 0.64359 Train acc = 0.74827  Val acc = 0.74600 
+2023-05-20 20:04:28.456892 Epoch 355 	Train Loss = 0.63076 Train acc = 0.75346  Val acc = 0.73000 
+2023-05-20 20:04:28.680755 Epoch 356 	Train Loss = 0.62714 Train acc = 0.75749  Val acc = 0.73200 
+2023-05-20 20:04:28.907937 Epoch 357 	Train Loss = 0.63406 Train acc = 0.75000  Val acc = 0.73800 
+2023-05-20 20:04:29.127534 Epoch 358 	Train Loss = 0.63673 Train acc = 0.74885  Val acc = 0.73800 
+2023-05-20 20:04:29.347432 Epoch 359 	Train Loss = 0.63975 Train acc = 0.74741  Val acc = 0.73600 
+2023-05-20 20:04:29.575541 Epoch 360 	Train Loss = 0.62901 Train acc = 0.75374  Val acc = 0.73400 
+2023-05-20 20:04:29.796766 Epoch 361 	Train Loss = 0.64695 Train acc = 0.74856  Val acc = 0.73200 
+2023-05-20 20:04:30.022174 Epoch 362 	Train Loss = 0.63752 Train acc = 0.75173  Val acc = 0.74000 
+2023-05-20 20:04:30.221392 Epoch 363 	Train Loss = 0.63928 Train acc = 0.75374  Val acc = 0.74200 
+2023-05-20 20:04:30.448900 Epoch 364 	Train Loss = 0.63622 Train acc = 0.74482  Val acc = 0.73400 
+2023-05-20 20:04:30.659037 Epoch 365 	Train Loss = 0.64032 Train acc = 0.74827  Val acc = 0.73800 
+2023-05-20 20:04:30.880766 Epoch 366 	Train Loss = 0.63758 Train acc = 0.75173  Val acc = 0.74000 
+2023-05-20 20:04:31.083722 Epoch 367 	Train Loss = 0.62820 Train acc = 0.74626  Val acc = 0.74000 
+2023-05-20 20:04:31.306893 Epoch 368 	Train Loss = 0.62956 Train acc = 0.74856  Val acc = 0.73200 
+2023-05-20 20:04:31.532116 Epoch 369 	Train Loss = 0.63001 Train acc = 0.75202  Val acc = 0.73000 
+2023-05-20 20:04:31.754786 Epoch 370 	Train Loss = 0.63801 Train acc = 0.74856  Val acc = 0.74000 
+2023-05-20 20:04:31.974591 Epoch 371 	Train Loss = 0.63500 Train acc = 0.75144  Val acc = 0.74000 
+2023-05-20 20:04:32.197706 Epoch 372 	Train Loss = 0.63475 Train acc = 0.75662  Val acc = 0.73000 
+2023-05-20 20:04:32.414677 Epoch 373 	Train Loss = 0.62214 Train acc = 0.75058  Val acc = 0.73600 
+2023-05-20 20:04:32.640376 Epoch 374 	Train Loss = 0.63477 Train acc = 0.75317  Val acc = 0.74000 
+2023-05-20 20:04:32.858806 Epoch 375 	Train Loss = 0.62749 Train acc = 0.75173  Val acc = 0.74400 
+2023-05-20 20:04:33.079229 Epoch 376 	Train Loss = 0.63055 Train acc = 0.75922  Val acc = 0.73400 
+2023-05-20 20:04:33.304294 Epoch 377 	Train Loss = 0.63737 Train acc = 0.74510  Val acc = 0.73200 
+2023-05-20 20:04:33.507294 Epoch 378 	Train Loss = 0.63576 Train acc = 0.75173  Val acc = 0.74000 
+2023-05-20 20:04:33.732840 Epoch 379 	Train Loss = 0.63154 Train acc = 0.75115  Val acc = 0.73600 
+2023-05-20 20:04:33.953747 Epoch 380 	Train Loss = 0.63157 Train acc = 0.75259  Val acc = 0.73400 
+2023-05-20 20:04:34.176647 Epoch 381 	Train Loss = 0.62854 Train acc = 0.75230  Val acc = 0.73200 
+2023-05-20 20:04:34.398660 Epoch 382 	Train Loss = 0.62135 Train acc = 0.76152  Val acc = 0.73200 
+2023-05-20 20:04:34.620428 Epoch 383 	Train Loss = 0.62072 Train acc = 0.75432  Val acc = 0.73200 
+2023-05-20 20:04:34.844909 Epoch 384 	Train Loss = 0.62887 Train acc = 0.74971  Val acc = 0.73400 
+2023-05-20 20:04:35.070650 Epoch 385 	Train Loss = 0.63047 Train acc = 0.75346  Val acc = 0.73200 
+2023-05-20 20:04:35.290718 Epoch 386 	Train Loss = 0.61168 Train acc = 0.75230  Val acc = 0.73400 
+2023-05-20 20:04:35.510567 Epoch 387 	Train Loss = 0.61988 Train acc = 0.75346  Val acc = 0.73400 
+2023-05-20 20:04:35.733486 Epoch 388 	Train Loss = 0.61992 Train acc = 0.76584  Val acc = 0.73400 
+2023-05-20 20:04:35.954210 Epoch 389 	Train Loss = 0.61360 Train acc = 0.75605  Val acc = 0.73400 
+2023-05-20 20:04:36.179568 Epoch 390 	Train Loss = 0.63064 Train acc = 0.75634  Val acc = 0.73400 
+2023-05-20 20:04:36.404488 Epoch 391 	Train Loss = 0.61861 Train acc = 0.76498  Val acc = 0.73400 
+2023-05-20 20:04:36.625841 Epoch 392 	Train Loss = 0.61598 Train acc = 0.75403  Val acc = 0.73200 
+2023-05-20 20:04:36.847638 Epoch 393 	Train Loss = 0.61611 Train acc = 0.75893  Val acc = 0.73000 
+2023-05-20 20:04:37.066037 Epoch 394 	Train Loss = 0.62337 Train acc = 0.75547  Val acc = 0.73000 
+2023-05-20 20:04:37.287225 Epoch 395 	Train Loss = 0.62479 Train acc = 0.75202  Val acc = 0.73400 
+2023-05-20 20:04:37.508259 Epoch 396 	Train Loss = 0.62867 Train acc = 0.75202  Val acc = 0.73600 
+2023-05-20 20:04:37.733535 Epoch 397 	Train Loss = 0.62603 Train acc = 0.75144  Val acc = 0.73400 
+2023-05-20 20:04:37.943755 Epoch 398 	Train Loss = 0.62213 Train acc = 0.75922  Val acc = 0.73600 
+2023-05-20 20:04:38.164508 Epoch 399 	Train Loss = 0.62408 Train acc = 0.75691  Val acc = 0.73000 
+2023-05-20 20:04:38.384733 Epoch 400 	Train Loss = 0.61484 Train acc = 0.75634  Val acc = 0.73200 
+2023-05-20 20:04:38.597126 Epoch 401 	Train Loss = 0.61650 Train acc = 0.75634  Val acc = 0.73200 
+2023-05-20 20:04:38.823033 Epoch 402 	Train Loss = 0.61868 Train acc = 0.75317  Val acc = 0.73800 
+2023-05-20 20:04:39.044909 Epoch 403 	Train Loss = 0.61037 Train acc = 0.76872  Val acc = 0.73200 
+2023-05-20 20:04:39.266680 Epoch 404 	Train Loss = 0.60906 Train acc = 0.76181  Val acc = 0.73400 
+Early stopping at epoch: 404
+Best at epoch 354:
+Train Loss = 0.64359
+Train acc = 0.74827 Val acc = 0.74600 
+--------- Test ---------
+Test acc = 0.70801
+Inference time: 0.02 s

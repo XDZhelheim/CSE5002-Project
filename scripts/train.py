@@ -264,10 +264,7 @@ if __name__ == "__main__":
     print_log(
         summary(
             model,
-            [
-                cfg["model_args"]["num_nodes"],
-                cfg["model_args"]["input_dim"],
-            ],
+            [5298, 6],
             verbose=0,
             device=DEVICE,
         ),

@@ -1,16 +1,16 @@
-  lr: 0.001
-  weight_decay: 0
-  milestones: [10, 30, 50]
-  clip_grad: 0
-  max_epochs: 200
+lr: 0.001
+weight_decay: 0
+milestones: [10, 30, 50]
+clip_grad: 0
+max_epochs: 200
 
-  model_args:
-    num_nodes: 5298
-    input_dim: 6
-    output_dim: 11
-    input_embedding_dim: 32
-    node_embedding_dim: 0
-    feed_forward_dim: 128
-    num_heads: 4
-    num_layers: 3
-    dropout: 0
+model_args:
+  num_nodes: 5298
+  input_dim: 6
+  output_dim: 11
+  input_embedding_dim: 32
+  node_embedding_dim: 0
+  feed_forward_dim: 128
+  num_heads: 4
+  num_layers: 3
+  dropout: 0

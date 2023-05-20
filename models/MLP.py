@@ -5,7 +5,7 @@ from torchinfo import summary
 
 
 class MLP(nn.Module):
-    def __init__(self, num_nodes=5298, input_dim=6, output_dim=11, hidden_dim=32):
+    def __init__(self, input_dim=6, output_dim=11, hidden_dim=32):
         super().__init__()
 
         self.input_dim = input_dim

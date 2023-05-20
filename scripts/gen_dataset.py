@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 # x: (N, channels)
 # y: (N, 1)
@@ -25,8 +26,33 @@ def gen_adj(file_path="../raw_data/adjlist.csv"):
     return adj
 
 
-def gen_data(file_path="../raw_data/attr.csv"):
-    data = np.loadtxt(file_path, delimiter=",", usecols=[1, 2, 3, 4, 5, 6])
+def gen_data(file_path="../raw_data/attr.csv", mode="labelenc"):
+    # data = np.loadtxt(file_path, delimiter=",", usecols=[1, 2, 3, 4, 5, 6])
+
+    df = pd.read_csv(
+        file_path,
+        names=["degree", "gender", "major", "second_major", "dormitory", "high_school"],
+    )
+    if mode.lower() == "onehot":
+        df_enc = pd.get_dummies(
+            df,
+            columns=[
+                "degree",
+                "gender",
+                "major",
+                "second_major",
+                "dormitory",
+                "high_school",
+            ],
+        )
+    elif mode.lower() == "labelenc":
+        df_enc = df.copy()
+        for feature in df.columns:
+            df_enc[feature] = df[feature].astype("category").cat.codes
+    else:
+        raise TypeError
+
+    data = df_enc.values
 
     print(data.shape)
     print(data)
@@ -49,7 +75,7 @@ def gen_labels(
     labels -= 2000
     labels[labels < 0] = -1
 
-    print("num_class:", len(np.unique(labels))-1)
+    print("num_class:", len(np.unique(labels)) - 1)
     print(np.unique(labels))
 
     # 这里将小于 2000 的标签全部标为 -1
@@ -80,5 +106,5 @@ def gen_labels(
 
 if __name__ == "__main__":
     gen_adj()
-    gen_data()
+    gen_data(mode="labelenc")
     gen_labels()

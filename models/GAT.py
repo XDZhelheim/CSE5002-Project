@@ -3,6 +3,9 @@ import torch
 import numpy as np
 from torchinfo import summary
 
+# ! deprecated
+# 因为爆显存
+
 
 class AttentionLayer(nn.Module):
     """Perform attention across the -2 dim (the -1 dim is `model_dim`).
@@ -109,7 +112,7 @@ class SelfAttentionLayer(nn.Module):
         return out
 
 
-class GAT_CLF(nn.Module):
+class GAT(nn.Module):
     def __init__(
         self,
         num_nodes=5298,
@@ -168,5 +171,5 @@ class GAT_CLF(nn.Module):
 
 
 if __name__ == "__main__":
-    model = GAT_CLF(num_layers=3)
+    model = GAT(num_layers=3)
     summary(model, [5298, 6], device="cpu")

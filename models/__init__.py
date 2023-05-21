@@ -1,5 +1,5 @@
 from .GCN import ADFGCN, LapeGCN
-from .GAT_CLF import GAT_CLF
+from .GAT import GAT
 from .MLP import MLP
 
 
@@ -11,7 +11,7 @@ def model_select(name):
     elif name in ("GCN", "LAPEGCN"):
         return LapeGCN
     elif name == "GAT":
-        return GAT_CLF
+        return GAT
     elif name == "MLP":
         return MLP
     else:

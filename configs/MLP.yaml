@@ -6,6 +6,7 @@ max_epochs: 1000
 early_stop: 50
 
 model_args:
-  input_dim: 2666
+  input_classes_list: [6, 3, 43, 44, 64, 2506]
+  embedding_dim: 64
   output_dim: 11
-  hidden_dim: 32
+  hidden_dim: 128
